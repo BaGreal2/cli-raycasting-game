@@ -86,9 +86,6 @@ int main() {
       }
     }
 
-    graphics.draw(someText);
-    graphics.draw(someBoldText);
-
     graphics.end();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));

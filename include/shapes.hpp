@@ -65,4 +65,15 @@ public:
   char *draw(Graphics *graphics);
 };
 
+class LargeText : public Shape {
+protected:
+  std::string content;
+  char bigLetters[26];
+
+public:
+  LargeText(vec2 position, std::string content);
+
+  char *draw(Graphics *graphics);
+};
+
 #endif

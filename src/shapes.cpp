@@ -1,5 +1,6 @@
 #include "../include/shapes.hpp"
 #include "../include/graphics.hpp"
+#include "../include/libfiglet.hpp"
 #include "../include/vec2.hpp"
 
 Shape::Shape(vec2 position, char *texture) : position(position) {
@@ -97,7 +98,8 @@ char *SolidRectangle::draw(Graphics *graphics) {
   return buffer;
 }
 
-Text::Text(vec2 position, std::string content) : Shape(position, new char[]{' '}) {
+Text::Text(vec2 position, std::string content)
+    : Shape(position, new char[]{' '}) {
   this->content = content;
 }
 
@@ -128,3 +130,51 @@ char *Text::draw(Graphics *graphics) {
   }
   return buffer;
 }
+
+LargeText::LargeText(vec2 position, std::string content)
+    : Shape(position, new char[]{' '}) {
+  this->content = content;
+}
+
+char *LargeText::draw(Graphics *graphics) {
+  using namespace srilakshmikanthanp::libfiglet;
+  char *buffer = graphics->buffer;
+  const figlet figlet(
+      flf_font::make_shared(
+          "/Users/macbook/Developer/C++/cli-graphics/fonts/Alligator.flf"),
+      smushed::make_shared());
+  std::string bigText = figlet(content);
+  bool drawed = false;
+
+  for (int i = 0; i < graphics->width; ++i) {
+    for (int j = 0; j < graphics->height; ++j) {
+      float x = (float)i / graphics->width * 2.0f * graphics->multiplier -
+                1.0f * graphics->multiplier;
+      float y = (float)j / graphics->height * 2.0f * graphics->multiplier -
+                1.0f * graphics->multiplier;
+      x *= graphics->aspect * graphics->pixelAspect;
+
+      if (x >= position.x && x <= position.x + content.size() &&
+          y >= position.y && y <= position.y + 1) {
+        int jCopy = j;
+        int iCopy = i;
+        for (auto ch : bigText) {
+          if (ch == '\n') {
+            jCopy++;
+            iCopy = i;
+            continue;
+          }
+          buffer[iCopy + jCopy * graphics->width] = ch;
+          iCopy++;
+        }
+        drawed = true;
+      }
+      if (drawed)
+        break;
+    }
+    if (drawed)
+      break;
+  }
+
+  return buffer;
+};
