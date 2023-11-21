@@ -67,7 +67,7 @@ int main() {
         0.002f, new char[]{'*', '*', '*', '*'}));
 
   Text someText(vec2(-1.2f, -1.2f), "_Underscored_");
-  Text someBoldText(vec2(-1.2f, -1.0f), ".Bold text.");
+  Text someBoldText(vec2(-1.2f, -1.0f), "$Bold text$");
 
   while (true) {
     graphics.begin();

@@ -50,11 +50,11 @@ void Graphics::end() {
         underlineMode = false;
         attroff(A_UNDERLINE);
         mvaddch(row, col, ' ');
-      } else if (ch == '.' && !boldMode) {
+      } else if (ch == '$' && !boldMode) {
         boldMode = true;
         mvaddch(row, col, ' ');
         attron(A_BOLD);
-      } else if (ch == '.' && boldMode) {
+      } else if (ch == '$' && boldMode) {
         boldMode = false;
         attroff(A_BOLD);
         mvaddch(row, col, ' ');
