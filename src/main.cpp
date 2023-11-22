@@ -3,26 +3,25 @@
 #include "../include/vec2.hpp"
 #include <iostream>
 #include <locale.h>
-#include <memory>
 #include <ncurses.h>
 #include <random>
 #include <sys/ioctl.h>
-#include <thread>
 #include <unistd.h>
-#include <vector>
 
 using std::vector;
 
 int main() {
-  setlocale(LC_ALL, "");
   initscr();
+
   struct winsize w;
   ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
   int width = w.ws_col;
   int height = w.ws_row;
 
+  timeout(0);
+
+  bool running = true;
   Graphics graphics(width, height, 2);
-  SolidRectangle smth(vec2(-2.5f, 0.5f), vec2(5.0f, 0.5f), new char[]{'/'});
 
   vector<std::unique_ptr<Shape>> shapes;
   shapes.push_back(std::make_unique<SolidRectangle>(
@@ -68,8 +67,23 @@ int main() {
 
   Text someText(vec2(-1.2f, -1.2f), "_Underscored_");
   Text someBoldText(vec2(-1.2f, -1.0f), "$Bold text$");
+  bool showText = false;
 
-  while (true) {
+  while (running) {
+    char ch = getch();
+    if (ch != ERR) {
+      switch (ch) {
+      case 'q':
+        running = false;
+        break;
+      case 'y':
+        showText = !showText;
+        break;
+      default:
+        break;
+      }
+    }
+
     graphics.begin();
 
     for (const auto &shape : shapes) {
@@ -86,15 +100,16 @@ int main() {
       }
     }
 
-    graphics.draw(someText);
-    graphics.draw(someBoldText);
+    if (showText) {
+      graphics.draw(someText);
+      graphics.draw(someBoldText);
+    }
 
     graphics.end();
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    usleep(5000);
   }
 
-  getchar();
   endwin();
   return 0;
 }
